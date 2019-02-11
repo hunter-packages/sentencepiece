@@ -43,10 +43,19 @@ set(libdir "\${exec_prefix}/lib")
 set(includedir "\${prefix}/include")
 set(GNUCXX_STD_SUPPORT_VERSION "4.3")
 
+if(HUNTER_ENABLED)
+  option(protobuf_MODULE_COMPATIBLE "use protobuf in module compatible mode" ON)
+  hunter_add_package(Protobuf)
+  find_package(Protobuf CONFIG REQUIRED)
+  set(libprotobuf_lite protobuf::libprotobuf-lite)
+else()
+
 if (SPM_USE_BUILTIN_PROTOBUF)
   set(libprotobuf_lite "")
 else()
   set(libprotobuf_lite "-lprotobuf-lite")
+endif()
+
 endif()
 
 if (MSVC)

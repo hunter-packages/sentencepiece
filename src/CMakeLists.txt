@@ -50,12 +50,18 @@ if (SPM_USE_BUILTIN_PROTOBUF)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../third_party/protobuf-lite)
   include_directories(builtin_pb)
 else()
+  if(NOT HUNTER_ENABLED)
   find_package(Protobuf REQUIRED)
   include_directories(${Protobuf_INCLUDE_DIRS})
+  endif()
+
   protobuf_generate_cpp(SPM_PROTO_SRCS SPM_PROTO_HDRS sentencepiece.proto)
   protobuf_generate_cpp(SPM_MODEL_PROTO_SRCS SPM_MODEL_PROTO_HDRS sentencepiece_model.proto)
   set(PROTOBUF_LITE_SRCS "")
+
+  if(NOT HUNTER_ENABLED)
   include_directories(${PROTOBUF_INCLUDE_DIR})
+  endif()
 endif()
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -180,7 +186,9 @@ add_library(sentencepiece-static STATIC ${SPM_SRCS})
 add_library(sentencepiece_train-static STATIC ${SPM_TRAIN_SRCS})
 
 target_link_libraries(sentencepiece-static INTERFACE ${SPM_LIBS})
+target_link_libraries(sentencepiece-static PUBLIC ${libprotobuf_lite})
 target_link_libraries(sentencepiece_train-static INTERFACE sentencepiece-static ${SPM_LIBS})
+target_link_libraries(sentencepiece_train-static PUBLIC ${libprotobuf_lite})
 
 if (SPM_ENABLE_SHARED)
   target_link_libraries(sentencepiece ${SPM_LIBS})
