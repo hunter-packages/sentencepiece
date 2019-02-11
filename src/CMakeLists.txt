@@ -182,6 +182,7 @@ add_library(sentencepiece_train ${SPM_TRAIN_SRCS})
 
 target_link_libraries(sentencepiece PUBLIC ${libprotobuf_lite} Threads::Threads)
 target_link_libraries(sentencepiece_train PUBLIC sentencepiece)
+set(SPM_INSTALLTARGETS sentencepiece sentencepiece_train)
 
 if (SPM_ENABLE_SHARED)
   target_link_libraries(sentencepiece ${SPM_LIBS})
@@ -245,9 +246,11 @@ list(APPEND SPM_INSTALLTARGETS
   spm_encode spm_decode spm_normalize spm_train spm_export_vocab)
 
 install(TARGETS ${SPM_INSTALLTARGETS}
+  EXPORT "${TARGETS_EXPORT_NAME}"
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(FILES sentencepiece_trainer.h sentencepiece_processor.h
   DESTINATION ${CMAKE_INSTALL_INCDIR})
 
