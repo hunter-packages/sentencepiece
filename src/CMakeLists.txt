@@ -225,6 +225,8 @@ if (NOT MSVC)
   endif()
 endif()
 
+if(SPM_BUILD_TOOLS)
+
 add_executable(spm_encode spm_encode_main.cc)
 add_executable(spm_decode spm_decode_main.cc)
 add_executable(spm_normalize spm_normalize_main.cc)
@@ -244,6 +246,8 @@ endif()
 
 list(APPEND SPM_INSTALLTARGETS
   spm_encode spm_decode spm_normalize spm_train spm_export_vocab)
+
+endif()
 
 install(TARGETS ${SPM_INSTALLTARGETS}
   EXPORT "${TARGETS_EXPORT_NAME}"
