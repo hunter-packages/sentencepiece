@@ -45,6 +45,27 @@ set(includedir "\${prefix}/include")
 set(GNUCXX_STD_SUPPORT_VERSION "4.3")
 
 if(HUNTER_ENABLED)
+  # If we cross compile for Android or iOS build a separate protoc executable on host to compile .proto files in CMake
+  if(IOS OR ANDROID)
+    include(hunter_experimental_add_host_project)
+    hunter_experimental_add_host_project(cmake/host)
+
+    add_executable(protobuf::protoc IMPORTED)
+    set(Protobuf_PROTOC_EXECUTABLE "${HUNTER_HOST_ROOT}/bin/protoc")
+    set_target_properties(
+        protobuf::protoc
+        PROPERTIES
+        IMPORTED_LOCATION
+        "${Protobuf_PROTOC_EXECUTABLE}"
+    )
+    set_target_properties(
+        protobuf::protoc
+        PROPERTIES
+        IMPORTED_LOCATION_RELEASE
+        "${Protobuf_PROTOC_EXECUTABLE}"
+    )
+  endif()
+
   option(protobuf_MODULE_COMPATIBLE "use protobuf in module compatible mode" ON)
   hunter_add_package(Protobuf)
   find_package(Protobuf CONFIG REQUIRED)
